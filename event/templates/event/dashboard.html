@@ -1,0 +1,121 @@
+<body>
+
+  <header class="top-header">
+    <h1>Event Management Dashboard</h1>
+  </header>
+
+  <main class="dashboard-container">
+
+    <div class="cards-row">
+
+      <div class="card bg-teal">
+        <div class="card-content">
+          <i class="fa-solid fa-list-ul card-icon"></i>
+          <h2>{{ total_categories }}</h2>
+          <p>Event Categories</p>
+        </div>
+        <a href="#" class="more-info">More Info <i class="fa-solid fa-circle-arrow-right"></i></a>
+      </div>
+
+      <div class="card bg-green">
+        <div class="card-content">
+          <i class="fa-regular fa-calendar-check card-icon"></i>
+          <h2>{{ total_events }}</h2>
+          <p>Total Events</p>
+        </div>
+        <a href="#" class="more-info">More Info <i class="fa-solid fa-circle-arrow-right"></i></a>
+      </div>
+
+      <div class="card bg-orange">
+        <div class="card-content">
+          <i class="fa-solid fa-users card-icon"></i>
+          <h2>0</h2>
+          <p>User Registrations</p>
+        </div>
+        <a href="#" class="more-info">More Info <i class="fa-solid fa-circle-arrow-right"></i></a>
+      </div>
+
+      <div class="card bg-red">
+        <div class="card-content">
+          <i class="fa-solid fa-circle-check card-icon"></i>
+          <h2>{{ completed_events }}</h2>
+          <p>Completed Events</p>
+        </div>
+        <a href="#" class="more-info">More Info <i class="fa-solid fa-circle-arrow-right"></i></a>
+      </div>
+
+    </div>
+
+    <div class="table-box">
+      <h2>Event List</h2>
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Event Name</th>
+            <th>Category</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Venue</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          {% for event in events %}
+
+          <tr>
+
+            <td>{{ event.id }}</td>
+            <td>{{ event.name }}</td>
+            <td>{{ event.category.name }}</td>
+            <td>{{ event.start_date }}</td>
+            <td>{{ event.end_date }}</td>
+            <td>{{ event.venue }}</td>
+
+            <td>
+              <span class="badge {{ event.status }}">
+                {{ event.status }}
+              </span>
+            </td>
+
+            <td>
+              <button class="btn">Edit</button>
+            </td>
+
+          </tr>
+
+          {% empty %}
+
+          <tr>
+            <td colspan="8">No Events Found</td>
+          </tr>
+
+          {% endfor %}
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </main>
+
+  <script>
+    document.querySelectorAll('.card').forEach(function(card) {
+      card.addEventListener('click', function() {
+        this.classList.remove('bounce');
+        void this.offsetWidth;
+        this.classList.add('bounce');
+        this.addEventListener('animationend', function() {
+          this.classList.remove('bounce');
+        }, { once: true });
+      });
+    });
+  </script>
+
+</body>

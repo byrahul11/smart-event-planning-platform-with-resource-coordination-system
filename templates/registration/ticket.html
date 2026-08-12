@@ -1,0 +1,66 @@
+{% extends "base/base.html" %}
+{% block title %}Ticket {{ registration.ticket_id }}{% endblock %}
+
+{% block content %}
+<div class="ticket-wrap">
+  <div class="page-title-row">
+    <h1>{{ registration.ticket_id }}</h1>
+  </div>
+
+  <div class="ticket-top-actions">
+    <button onclick="window.print()" class="btn btn-secondary"><i class="fas fa-print"></i> Print</button>
+    {% if registration.qr_code %}
+      <a href="{{ registration.qr_code.url }}" download class="btn btn-secondary"><i class="fas fa-qrcode"></i> Download QR</a>
+    {% endif %}
+    <a href="{% url 'download_ticket_pdf' registration.ticket_id %}" class="btn btn-primary"><i class="fas fa-file-pdf"></i> Download PDF</a>
+  </div>
+
+  <div class="ticket-card">
+    <div class="ticket-header">
+      <h2>{{ registration.event.name }}</h2>
+      <span class="ticket-status-pill">{{ registration.get_status_display }}</span>
+    </div>
+
+    <div class="ticket-body">
+      <div class="ticket-fields">
+        <div class="ticket-field"><div class="label">Ticket ID</div><div class="value">{{ registration.ticket_id }}</div></div>
+        <div class="ticket-field"><div class="label">Event UID</div><div class="value">{{ registration.event.pk }}</div></div>
+
+        <div class="ticket-field"><div class="label">Participant</div><div class="value">{{ registration.user.get_full_name|default:registration.user.username }}</div></div>
+        <div class="ticket-field"><div class="label">Email</div><div class="value">{{ registration.user.email|default:"—" }}</div></div>
+
+        <div class="ticket-field"><div class="label">Organizer</div><div class="value">{{ registration.event.created_by.get_full_name|default:registration.event.created_by.username|default:"—" }}</div></div>
+        <div class="ticket-field"><div class="label">Event Date</div><div class="value">{{ registration.event.start_date }}</div></div>
+
+        <div class="ticket-field"><div class="label">Venue</div><div class="value">{{ registration.event.venue }}</div></div>
+        <div class="ticket-field"><div class="label">Event Status</div><div class="value">{{ registration.event.get_status_display }}</div></div>
+
+        <div class="ticket-field"><div class="label">Ticket Status</div>
+          <div class="value">{% if registration.checked_in %}Checked In{% else %}Active{% endif %}</div>
+        </div>
+        <div class="ticket-field"><div class="label">Generated</div><div class="value">{{ registration.registered_at|date:"M d, Y g:i A" }}</div></div>
+      </div>
+
+      <div class="ticket-qr">
+        {% if registration.qr_code %}
+          <img src="{{ registration.qr_code.url }}" alt="QR code">
+        {% endif %}
+        <div class="ticket-id-chip">{{ registration.ticket_id }}</div>
+      </div>
+    </div>
+
+    <div class="ticket-token-row">
+      <i class="fas fa-key"></i>
+      <span style="font-size:12.5px;">Verification token — paste this into QR Verification if you can't scan the image</span>
+      <input type="text" readonly value="{{ registration.verification_token }}" id="token-input" onclick="this.select();">
+      <button class="btn btn-secondary btn-sm no-print" onclick="navigator.clipboard.writeText(document.getElementById('token-input').value)">
+        <i class="fas fa-copy"></i> Copy
+      </button>
+    </div>
+  </div>
+
+  <div class="mt-3">
+    <a href="{% url 'user_dashboard' %}" class="btn btn-secondary no-print"><i class="fas fa-arrow-left"></i> Back to event</a>
+  </div>
+</div>
+{% endblock %}

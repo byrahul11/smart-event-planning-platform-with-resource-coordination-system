@@ -1,0 +1,42 @@
+{% extends "base/base.html" %}
+{% block title %}Category List{% endblock %}
+
+{% block content %}
+<div class="page-title-row">
+  <h1>Event Categories</h1>
+  <div class="breadcrumb"><a href="{% url 'dashboard' %}">Dashboard</a> / Category List</div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>All Categories</h2>
+    <a href="{% url 'create_category' %}" class="btn btn-primary">+ Create Category</a>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Category Name</th>
+        <th>Description</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for category in categories %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ category.name }}</td>
+        <td>{{ category.description }}</td>
+        <td>
+          <a href="{% url 'category_details' category.pk %}" class="btn btn-secondary">View</a>
+          <a href="{% url 'edit_category' category.pk %}" class="btn btn-primary">Edit</a>
+          <a href="{% url 'delete_category' category.pk %}" class="btn btn-danger">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4" style="text-align:center;color:#888;">No categories yet</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% load static %}
+<!-- MILESTONE 3: Theme Settings off-canvas panel (see Image 2) -->
+<div class="theme-panel-overlay" id="theme-panel-overlay" onclick="closeThemePanel()"></div>
+<div class="theme-panel" id="theme-panel">
+  <button class="theme-panel-close" onclick="closeThemePanel()"><i class="fas fa-times"></i></button>
+  <h3>Theme Settings</h3>
+  <hr>
+
+  <form method="post" action="{% url 'theme_settings' %}" id="theme-form">
+    {% csrf_token %}
+    {% if theme_dark_mode %}<input type="hidden" name="dark_mode" value="on">{% endif %}
+
+    <label class="section-label">Font Family</label>
+    <select name="font_family" style="margin-bottom:18px;">
+      <option value="Poppins" {% if theme_font_family == "Poppins" %}selected{% endif %}>Poppins</option>
+      <option value="Roboto" {% if theme_font_family == "Roboto" %}selected{% endif %}>Roboto</option>
+      <option value="Inter" {% if theme_font_family == "Inter" %}selected{% endif %}>Inter</option>
+      <option value="Arial" {% if theme_font_family == "Arial" %}selected{% endif %}>Arial</option>
+    </select>
+
+    <label class="section-label">Primary Color</label>
+    <div class="swatch-row">
+      <span class="swatch {% if theme_primary_color == '#3949ab' %}selected{% endif %}" style="background:#3949ab;" onclick="pickColor('primary_color', '#3949ab', this)"></span>
+      <span class="swatch {% if theme_primary_color == '#28a745' %}selected{% endif %}" style="background:#28a745;" onclick="pickColor('primary_color', '#28a745', this)"></span>
+      <span class="swatch {% if theme_primary_color == '#e63946' %}selected{% endif %}" style="background:#e63946;" onclick="pickColor('primary_color', '#e63946', this)"></span>
+      <span class="swatch {% if theme_primary_color == '#8e6fee' %}selected{% endif %}" style="background:#8e6fee;" onclick="pickColor('primary_color', '#8e6fee', this)"></span>
+      <span class="swatch {% if theme_primary_color == '#f39c12' %}selected{% endif %}" style="background:#f39c12;" onclick="pickColor('primary_color', '#f39c12', this)"></span>
+      <input type="hidden" name="primary_color" id="primary_color_input" value="{{ theme_primary_color }}">
+    </div>
+
+    <label class="section-label">Sidebar Color</label>
+    <div class="swatch-row">
+      <span class="swatch {% if theme_sidebar_color == '#17203a' %}selected{% endif %}" style="background:#17203a;" onclick="pickColor('sidebar_color', '#17203a', this)"></span>
+      <span class="swatch {% if theme_sidebar_color == '#1b2a4e' %}selected{% endif %}" style="background:#1b2a4e;" onclick="pickColor('sidebar_color', '#1b2a4e', this)"></span>
+      <span class="swatch {% if theme_sidebar_color == '#2f3b52' %}selected{% endif %}" style="background:#2f3b52;" onclick="pickColor('sidebar_color', '#2f3b52', this)"></span>
+      <span class="swatch {% if theme_sidebar_color == '#000000' %}selected{% endif %}" style="background:#000000;" onclick="pickColor('sidebar_color', '#000000', this)"></span>
+      <input type="hidden" name="sidebar_color" id="sidebar_color_input" value="{{ theme_sidebar_color }}">
+    </div>
+
+    <label class="section-label">Font Size (<span id="font-size-value">{{ theme_font_size }}</span>px)</label>
+    <input type="range" name="font_size" min="12" max="22" value="{{ theme_font_size }}"
+           oninput="document.getElementById('font-size-value').innerText = this.value; document.documentElement.style.setProperty('--font-size', this.value + 'px');">
+
+    <div style="margin-top:22px;display:flex;gap:10px;">
+      <button type="submit" class="btn btn-primary w-100">Save Theme</button>
+    </div>
+  </form>
+
+  <form method="post" action="{% url 'reset_theme' %}" style="margin-top:10px;">
+    {% csrf_token %}
+    <button type="submit" class="btn w-100" style="background:#ff5c4d;color:#fff;">Reset Theme</button>
+  </form>
+</div>
+
+<script>
+function openThemePanel() {
+  document.getElementById('theme-panel').classList.add('open');
+  document.getElementById('theme-panel-overlay').classList.add('open');
+}
+function closeThemePanel() {
+  document.getElementById('theme-panel').classList.remove('open');
+  document.getElementById('theme-panel-overlay').classList.remove('open');
+}
+function pickColor(fieldName, color, el) {
+  document.getElementById(fieldName + '_input').value = color;
+  el.parentElement.querySelectorAll('.swatch').forEach(function(s){ s.classList.remove('selected'); });
+  el.classList.add('selected');
+  // live preview before saving
+  if (fieldName === 'primary_color') document.documentElement.style.setProperty('--primary-color', color);
+  if (fieldName === 'sidebar_color') document.documentElement.style.setProperty('--sidebar-color', color);
+}
+</script>

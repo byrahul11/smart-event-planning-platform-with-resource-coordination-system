@@ -1,0 +1,50 @@
+{% extends "base/base.html" %}
+{% block title %}Budget Management{% endblock %}
+
+{% block content %}
+<div class="page-title-row">
+  <h1><i class="fas fa-wallet"></i> Budget Management</h1>
+  <a href="{% url 'create_budget' %}" class="btn btn-success">+ Create Budget</a>
+</div>
+
+<div class="card" style="padding:16px 20px;margin-bottom:18px;">
+  <form method="get" style="display:flex;gap:10px;">
+    <input type="text" name="q" value="{{ search }}" placeholder="Search Event...">
+    <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Search</button>
+  </form>
+</div>
+
+<div class="finance-summary">
+  <div class="stat-card bg-teal"><div class="stat-content"><h2>₹{{ total_allocated }}</h2><p>Total Allocated</p></div></div>
+  <div class="stat-card bg-orange"><div class="stat-content"><h2>₹{{ total_spent }}</h2><p>Total Spent</p></div></div>
+</div>
+
+<div class="card">
+  <div class="card-header" style="background:#111;color:#fff;"><h2 style="color:#fff;">Budget List</h2></div>
+  <table>
+    <thead>
+      <tr><th>ID</th><th>Event</th><th>Allocated Budget</th><th>Spent</th><th>Created On</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for budget in budgets %}
+      <tr>
+        <td>{{ budget.pk }}</td>
+        <td>{{ budget.event.name }}</td>
+        <td><span class="badge active">₹{{ budget.allocated_amount }}</span></td>
+        <td>₹{{ budget.spent_amount }}</td>
+        <td>{{ budget.created_at|date:"d M Y" }}</td>
+        <td>
+          <a href="{% url 'edit_budget' budget.pk %}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+          <form method="post" action="{% url 'delete_budget' budget.pk %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" style="text-align:center;color:#888;">No budgets yet</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

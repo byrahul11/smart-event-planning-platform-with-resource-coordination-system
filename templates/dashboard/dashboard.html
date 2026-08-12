@@ -1,0 +1,76 @@
+{% extends "base/base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-title-row">
+  <h1>Dashboard</h1>
+  <div class="breadcrumb"><a href="{% url 'dashboard' %}">Home</a> / Dashboard</div>
+</div>
+
+<div class="cards-row">
+  <div class="stat-card bg-purple">
+    <div class="stat-content">
+      <h2>{{ total_categories|default:"0" }}</h2>
+      <p>Event Categories</p>
+    </div>
+    <a href="{% url 'category_list' %}" class="more-info">More Info &rarr;</a>
+  </div>
+
+  <div class="stat-card bg-green">
+    <div class="stat-content">
+      <h2>{{ total_events|default:"0" }}</h2>
+      <p>Total Events</p>
+    </div>
+    <a href="{% url 'event_list' %}" class="more-info">More Info &rarr;</a>
+  </div>
+
+  <div class="stat-card bg-orange">
+    <div class="stat-content">
+      <h2>{{ total_members|default:"0" }}</h2>
+      <p>Registered Members</p>
+    </div>
+    <a href="{% url 'admin_registration_list' %}" class="more-info">More Info &rarr;</a>
+  </div>
+
+  <div class="stat-card bg-red">
+    <div class="stat-content">
+      <h2>{{ total_completed|default:"0" }}</h2>
+      <p>Completed Events</p>
+    </div>
+    <a href="{% url 'complete_event_list' %}" class="more-info">More Info &rarr;</a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>Recent Events</h2>
+    <a href="{% url 'create_event' %}" class="btn btn-primary">+ Create Event</a>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Event Name</th>
+        <th>Category</th>
+        <th>Start Date</th>
+        <th>Venue</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for event in events %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td><a href="{% url 'event_details' event.pk %}">{{ event.name }}</a></td>
+        <td>{{ event.category.name|default:"—" }}</td>
+        <td>{{ event.start_date }}</td>
+        <td>{{ event.venue }}</td>
+        <td><span class="badge {{ event.status }}">{{ event.get_status_display }}</span></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" style="text-align:center;color:#888;">No events yet</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

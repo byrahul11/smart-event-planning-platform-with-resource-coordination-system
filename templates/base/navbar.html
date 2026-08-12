@@ -1,0 +1,98 @@
+{% load static %}
+<header class="topbar">
+  <div class="hamburger" onclick="document.body.classList.toggle('sidebar-collapsed')">&#9776;</div>
+
+  <div class="topbar-links">
+    <a href="{% url 'home' %}">Home</a>
+  </div>
+
+  <div class="topbar-search">
+    <form method="get" action="{% url 'event_list' %}" style="width:100%;max-width:320px;">
+      <input type="text" name="q" placeholder="Search Events, Categories...">
+    </form>
+  </div>
+
+  <div class="topbar-icons">
+
+    <!-- Theme trigger (Image 2) -->
+    <span onclick="openThemePanel()" title="Theme Settings"><i class="fas fa-palette"></i></span>
+
+    <!-- Notifications (Image 4) -->
+    <span style="position:relative;" onclick="toggleDropdown('notif-dropdown', this)">
+      <i class="far fa-bell"></i>
+      {% if nav_unread_count > 0 %}
+        <span class="icon-badge">{{ nav_unread_count }}</span>
+      {% endif %}
+      <div class="dropdown-panel" id="notif-dropdown">
+        <div class="dp-header">
+          <span>Notifications</span>
+          <a href="{% url 'notification_list' %}">View all</a>
+        </div>
+        {% for n in nav_notifications %}
+          <div class="notification-item {% if not n.is_read %}unread{% endif %}">
+            <span class="n-icon">
+              {% if n.notif_type == 'event_created' %}📅
+              {% elif n.notif_type == 'registration' %}🎟️
+              {% elif n.notif_type == 'event_completed' %}✅
+              {% else %}❤️{% endif %}
+            </span>
+            <span class="n-title">{{ n.title }}</span>
+            <div class="n-message">{{ n.message }}</div>
+            <div class="n-time">{{ n.created_at|timesince }} ago</div>
+          </div>
+        {% empty %}
+          <div class="notif-empty">No notifications yet</div>
+        {% endfor %}
+      </div>
+    </span>
+
+    <!-- Profile dropdown (Image 1) -->
+    <span style="position:relative;" onclick="toggleDropdown('profile-dropdown', this)">
+      <span class="navbar-profile">
+        {% if request.user.profile.photo %}
+          <img src="{{ request.user.profile.photo.url }}" alt="profile">
+        {% else %}
+          <span class="navbar-avatar-fallback">{{ request.user.username|slice:":1"|upper }}</span>
+        {% endif %}
+        <span class="name">{{ request.user.get_full_name|default:request.user.username }}</span>
+        <i class="fas fa-chevron-down" style="font-size:11px;"></i>
+      </span>
+
+      <div class="dropdown-panel profile-menu" id="profile-dropdown">
+        <a href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a>
+        <a href="{% url 'theme_settings' %}"><i class="fas fa-cog"></i> Settings</a>
+        <form method="post" action="{% url 'toggle_dark_mode' %}">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.path }}">
+          <button type="submit"><i class="fas fa-moon"></i> Dark Mode {% if theme_dark_mode %}(On){% endif %}</button>
+        </form>
+        <hr>
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </form>
+      </div>
+    </span>
+
+  </div>
+</header>
+
+<script>
+function toggleDropdown(id, trigger) {
+  document.querySelectorAll('.dropdown-panel').forEach(function(panel) {
+    if (panel.id !== id) panel.classList.remove('open');
+  });
+  var panel = document.getElementById(id);
+  panel.classList.toggle('open');
+  if (panel.classList.contains('open') && id === 'notif-dropdown') {
+    fetch("{% url 'mark_notifications_read' %}", {
+      method: 'POST',
+      headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value}
+    });
+  }
+  event.stopPropagation();
+}
+document.addEventListener('click', function() {
+  document.querySelectorAll('.dropdown-panel').forEach(function(p){ p.classList.remove('open'); });
+});
+</script>

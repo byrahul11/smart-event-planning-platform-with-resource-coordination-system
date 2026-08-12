@@ -1,0 +1,20 @@
+{% extends "base/base.html" %}
+{% block title %}Edit Category{% endblock %}
+
+{% block content %}
+<div class="form-card">
+  <h1>Edit Category</h1>
+  <form method="post" action="{% url 'edit_category' category.pk %}">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="id_name">Category Name</label>
+      {{ form.name }}
+    </div>
+    <div class="form-group">
+      <label for="id_description">Description</label>
+      {{ form.description }}
+    </div>
+    <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+  </form>
+</div>
+{% endblock %}

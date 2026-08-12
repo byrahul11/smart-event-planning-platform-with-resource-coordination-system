@@ -1,0 +1,43 @@
+{% extends "base/base.html" %}
+{% block title %}Join Event List{% endblock %}
+
+{% block content %}
+<div class="page-title-row">
+  <h1>Join Event List</h1>
+  <div class="breadcrumb"><a href="{% url 'dashboard' %}">Dashboard</a> / Join Event List</div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>All Registrations</h2>
+    <form method="get" style="display:flex;gap:8px;">
+      <select name="event" onchange="this.form.submit()">
+        <option value="">All Events</option>
+        {% for e in events %}
+          <option value="{{ e.pk }}" {% if selected_event == e.pk|stringformat:"s" %}selected{% endif %}>{{ e.name }}</option>
+        {% endfor %}
+      </select>
+    </form>
+  </div>
+  <table>
+    <thead>
+      <tr><th>#</th><th>Ticket ID</th><th>User</th><th>Event</th><th>Status</th><th>Checked In</th><th>Registered On</th></tr>
+    </thead>
+    <tbody>
+      {% for reg in registrations %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ reg.ticket_id }}</td>
+        <td>{{ reg.user.username }}</td>
+        <td>{{ reg.event.name }}</td>
+        <td><span class="badge {{ reg.status }}">{{ reg.get_status_display }}</span></td>
+        <td>{% if reg.checked_in %}<span class="badge active">Yes</span>{% else %}<span class="badge pending">No</span>{% endif %}</td>
+        <td>{{ reg.registered_at|date:"M d, Y g:i A" }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7" style="text-align:center;color:#888;">No registrations yet</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

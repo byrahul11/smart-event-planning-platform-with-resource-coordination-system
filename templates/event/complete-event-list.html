@@ -1,0 +1,32 @@
+{% extends "base/base.html" %}
+{% block title %}Completed Events{% endblock %}
+
+{% block content %}
+<div class="page-title-row">
+  <h1>Complete Event List</h1>
+  <div class="breadcrumb"><a href="{% url 'dashboard' %}">Dashboard</a> / Complete Event List</div>
+</div>
+
+<div class="card">
+  <div class="card-header"><h2>Completed Events</h2></div>
+  <table>
+    <thead>
+      <tr><th>#</th><th>Event Name</th><th>Category</th><th>Venue</th><th>Ended On</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for event in events %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ event.name }}</td>
+        <td>{{ event.category.name|default:"—" }}</td>
+        <td>{{ event.venue }}</td>
+        <td>{{ event.end_date }}</td>
+        <td><a href="{% url 'event_details' event.pk %}" class="btn btn-secondary btn-sm">View</a></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" style="text-align:center;color:#888;">No completed events yet</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

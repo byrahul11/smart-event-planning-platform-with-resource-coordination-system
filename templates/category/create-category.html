@@ -1,0 +1,20 @@
+{% extends "base/base.html" %}
+{% block title %}Create Category{% endblock %}
+
+{% block content %}
+<div class="form-card">
+  <h1>Create Category</h1>
+  <form method="post" action="{% url 'create_category' %}">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="id_name">Category Name</label>
+      {{ form.name }}
+    </div>
+    <div class="form-group">
+      <label for="id_description">Description</label>
+      {{ form.description }}
+    </div>
+    <button type="submit" class="btn btn-success w-100">Create Category</button>
+  </form>
+</div>
+{% endblock %}

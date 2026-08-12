@@ -1,0 +1,118 @@
+{% load static %}
+<aside class="sidebar">
+  <div class="sidebar-title"><i class="fas fa-calendar-check"></i> Event Registration</div>
+  <div class="sidebar-user">
+    {% if request.user.is_staff %}Admin Panel{% else %}User Panel{% endif %}
+    — {{ request.user.get_full_name|default:request.user.username }}
+  </div>
+
+  <ul class="sidebar-nav">
+
+    {% if request.user.is_staff %}
+      <li class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+        <a href="{% url 'dashboard' %}"><i class="fas fa-home"></i> <span>Dashboard</span></a>
+      </li>
+
+      <li>
+        <div class="nav-toggle" onclick="toggleSubmenu('menu-category')">
+          <i class="fas fa-folder"></i> <span>Category</span>
+          <i class="fas fa-chevron-down" style="margin-left:auto;font-size:11px;"></i>
+        </div>
+        <ul class="sidebar-submenu" id="menu-category">
+          <li><a href="{% url 'category_list' %}"><span>Category List</span></a></li>
+          <li><a href="{% url 'create_category' %}"><span>Create Category</span></a></li>
+        </ul>
+      </li>
+
+      <li>
+        <div class="nav-toggle" onclick="toggleSubmenu('menu-events')">
+          <i class="fas fa-calendar-alt"></i> <span>Events</span>
+          <i class="fas fa-chevron-down" style="margin-left:auto;font-size:11px;"></i>
+        </div>
+        <ul class="sidebar-submenu" id="menu-events">
+          <li><a href="{% url 'create_event' %}"><i class="fas fa-plus-circle"></i><span>Create Event</span></a></li>
+          <li><a href="{% url 'event_list' %}"><i class="fas fa-list"></i><span>Event List</span></a></li>
+          <li><a href="{% url 'complete_event_list' %}"><i class="fas fa-check-circle"></i><span>Complete Event List</span></a></li>
+        </ul>
+      </li>
+
+      <li>
+        <div class="nav-toggle" onclick="toggleSubmenu('menu-members')">
+          <i class="fas fa-users"></i> <span>Members</span>
+          <i class="fas fa-chevron-down" style="margin-left:auto;font-size:11px;"></i>
+        </div>
+        <ul class="sidebar-submenu" id="menu-members">
+          <li><a href="{% url 'add_event_member' %}"><i class="fas fa-user-plus"></i><span>Add Event Member</span></a></li>
+          <li><a href="{% url 'event_member_list' %}"><i class="fas fa-address-book"></i><span>Member List</span></a></li>
+        </ul>
+      </li>
+
+      <li>
+        <div class="nav-toggle" onclick="toggleSubmenu('menu-registrations')">
+          <i class="fas fa-clipboard-list"></i> <span>Registrations</span>
+          <i class="fas fa-chevron-down" style="margin-left:auto;font-size:11px;"></i>
+        </div>
+        <ul class="sidebar-submenu" id="menu-registrations">
+          <li><a href="{% url 'admin_registration_list' %}"><i class="fas fa-user-check"></i><span>Join Event List</span></a></li>
+          <li><a href="{% url 'admin_wishlist_list' %}"><i class="fas fa-heart"></i><span>Event Wish List</span></a></li>
+          <li><a href="{% url 'add_wishlist_user' %}"><i class="fas fa-user-cog"></i><span>Add Event Wish User</span></a></li>
+        </ul>
+      </li>
+
+      <li>
+        <div class="nav-toggle" onclick="toggleSubmenu('menu-attendance')">
+          <i class="fas fa-user-check"></i> <span>Attendance</span>
+          <i class="fas fa-chevron-down" style="margin-left:auto;font-size:11px;"></i>
+        </div>
+        <ul class="sidebar-submenu" id="menu-attendance">
+          <li><a href="{% url 'scan_qr' %}"><i class="fas fa-qrcode"></i><span>Scan QR</span></a></li>
+        </ul>
+      </li>
+
+      <li>
+        <div class="nav-toggle" onclick="toggleSubmenu('menu-finance')">
+          <i class="fas fa-wallet"></i> <span>Finance</span>
+          <i class="fas fa-chevron-down" style="margin-left:auto;font-size:11px;"></i>
+        </div>
+        <ul class="sidebar-submenu" id="menu-finance">
+          <li><a href="{% url 'budget_list' %}"><i class="fas fa-list"></i><span>Budget Management</span></a></li>
+          <li><a href="{% url 'create_budget' %}"><i class="fas fa-plus-circle"></i><span>Create Budget</span></a></li>
+          <li><a href="{% url 'finance_analysis' %}"><i class="fas fa-chart-pie"></i><span>Event Finance Analysis</span></a></li>
+        </ul>
+      </li>
+
+    {% else %}
+      <li class="{% if request.resolver_match.url_name == 'user_dashboard' %}active{% endif %}">
+        <a href="{% url 'user_dashboard' %}"><i class="fas fa-home"></i> <span>Dashboard</span></a>
+      </li>
+      <li><a href="{% url 'user_dashboard' %}"><i class="fas fa-calendar-alt"></i> <span>Events</span></a></li>
+      <li><a href="{% url 'my_tickets' %}"><i class="fas fa-ticket-alt"></i> <span>My Tickets</span></a></li>
+      <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> <span>My Profile</span></a></li>
+    {% endif %}
+
+    <li style="margin-top:8px;border-top:1px solid rgba(255,255,255,0.08);padding-top:8px;">
+      <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="nav-toggle" style="width:100%;background:none;border:none;color:#ff8686;">
+          <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+        </button>
+      </form>
+    </li>
+  </ul>
+</aside>
+
+<script>
+function toggleSubmenu(id) {
+  var el = document.getElementById(id);
+  var isOpen = el.classList.contains('open');
+  document.querySelectorAll('.sidebar-submenu').forEach(function(s){ s.classList.remove('open'); });
+  if (!isOpen) el.classList.add('open');
+}
+// auto-open the submenu containing the current page
+(function() {
+  var current = window.location.pathname;
+  document.querySelectorAll('.sidebar-submenu').forEach(function(sub) {
+    if (sub.querySelector('a[href="' + current + '"]')) sub.classList.add('open');
+  });
+})();
+</script>

@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up — Event Registration Platform</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <style>
+    body { display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #6a11cb, #2575fc); min-height: 100vh; padding: 20px 0; }
+  </style>
+</head>
+<body>
+
+  <div class="form-card">
+    <h1>Create Account</h1>
+
+    {% include "base/messages.html" %}
+
+    <form method="post" action="{% url 'signup' %}">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="id_first_name">Full Name</label>
+        {{ form.first_name }}
+        {{ form.first_name.errors }}
+      </div>
+
+      <div class="form-group">
+        <label for="id_username">Username</label>
+        {{ form.username }}
+        {{ form.username.errors }}
+      </div>
+
+      <div class="form-group">
+        <label for="id_email">Email</label>
+        {{ form.email }}
+        {{ form.email.errors }}
+      </div>
+
+      <div class="form-group">
+        <label for="id_phone">Phone Number</label>
+        {{ form.phone }}
+      </div>
+
+      <div class="form-group">
+        <label for="id_password">Password</label>
+        {{ form.password }}
+        {{ form.password.errors }}
+      </div>
+
+      <div class="form-group">
+        <label for="id_confirm_password">Confirm Password</label>
+        {{ form.confirm_password }}
+      </div>
+      {{ form.non_field_errors }}
+
+      <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+
+      <p style="text-align:center;margin-top:12px;font-size:14px;">
+        Already have an account? <a href="{% url 'login' %}" style="color:#6a11cb;font-weight:600;">Login</a>
+      </p>
+    </form>
+  </div>
+
+</body>
+</html>

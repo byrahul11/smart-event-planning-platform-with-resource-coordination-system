@@ -1,0 +1,29 @@
+{% extends "base/base.html" %}
+{% block title %}Add Event Wish User{% endblock %}
+
+{% block content %}
+<div class="form-card">
+  <h1>Add Event Wish User</h1>
+  <p class="text-muted" style="text-align:center;margin-bottom:16px;font-size:13px;">
+    Manually mark a registered user as interested in an event.
+  </p>
+  <form method="post" action="{% url 'add_wishlist_user' %}">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="event">Event</label>
+      <select name="event" id="event" required>
+        <option value="">-- Select Event --</option>
+        {% for e in events %}
+          <option value="{{ e.pk }}">{{ e.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" name="username" id="username" placeholder="Existing username" required>
+      <span class="form-hint">The user must already have an account.</span>
+    </div>
+    <button type="submit" class="btn btn-success w-100">Add to Wishlist</button>
+  </form>
+</div>
+{% endblock %}

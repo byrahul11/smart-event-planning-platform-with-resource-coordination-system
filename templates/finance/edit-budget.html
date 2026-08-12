@@ -1,0 +1,28 @@
+{% extends "base/base.html" %}
+{% block title %}Edit Budget{% endblock %}
+
+{% block content %}
+<div class="form-card">
+  <h1>Edit Budget — {{ budget.event.name }}</h1>
+  <form method="post" action="{% url 'edit_budget' budget.pk %}">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="id_event">Event</label>
+      {{ form.event }}
+    </div>
+    <div class="form-group">
+      <label for="id_allocated_amount">Allocated Budget (₹)</label>
+      {{ form.allocated_amount }}
+    </div>
+    <div class="form-group">
+      <label for="id_spent_amount">Spent So Far (₹)</label>
+      {{ form.spent_amount }}
+    </div>
+    <div class="form-group">
+      <label for="id_notes">Notes</label>
+      {{ form.notes }}
+    </div>
+    <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Category</title>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 30px;
+    }
+
+    .page-title {
+      background: #17203a;
+      color: #ffffff;
+      padding: 15px 25px;
+      border-radius: 6px;
+      margin-bottom: 25px;
+      font-size: 20px;
+    }
+
+    .form-card {
+      background: #ffffff;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .form-card h2 {
+      margin-bottom: 20px;
+      color: #17203a;
+      font-size: 20px;
+      border-bottom: 2px solid #3949ab;
+      padding-bottom: 10px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      font-size: 14px;
+      color: #333;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .btn-create {
+      background: #3949ab;
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 6px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    .btn-create:hover {
+      background: #2c3a8c;
+    }
+
+    .btn-list {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 6px;
+      font-size: 15px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-list:hover {
+      background: #1e7e34;
+    }
+
+    .error {
+      color: red;
+      margin-bottom: 15px;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <div class="page-title">
+    Event Registration Platform — Create Category
+  </div>
+
+  <div class="form-card">
+
+    <h2>Create Event Category</h2>
+
+    <form method="POST">
+
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="cat-name">Category Name</label>
+
+        <input
+          type="text"
+          id="cat-name"
+          name="name"
+          placeholder="e.g. Technical, Cultural, Sports"
+          required>
+      </div>
+
+      <div class="btn-row">
+
+        <button type="submit" class="btn-create">
+          Create
+        </button>
+
+        <a href="{% url 'category_list' %}" class="btn-list">
+          Category List
+        </a>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</body>
+</html>

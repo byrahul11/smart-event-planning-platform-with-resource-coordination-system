@@ -1,0 +1,28 @@
+{% extends "base/base.html" %}
+{% block title %}Create Budget{% endblock %}
+
+{% block content %}
+<div class="form-card">
+  <h1>Create Budget</h1>
+  <form method="post" action="{% url 'create_budget' %}">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="id_event">Event</label>
+      {{ form.event }}
+    </div>
+    <div class="form-group">
+      <label for="id_allocated_amount">Allocated Budget (₹)</label>
+      {{ form.allocated_amount }}
+    </div>
+    <div class="form-group">
+      <label for="id_spent_amount">Spent So Far (₹)</label>
+      {{ form.spent_amount }}
+    </div>
+    <div class="form-group">
+      <label for="id_notes">Notes</label>
+      {{ form.notes }}
+    </div>
+    <button type="submit" class="btn btn-success w-100">Create Budget</button>
+  </form>
+</div>
+{% endblock %}

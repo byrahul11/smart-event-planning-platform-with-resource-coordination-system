@@ -1,0 +1,58 @@
+{% extends "base/base.html" %}
+{% block title %}Scan QR — Attendance{% endblock %}
+
+{% block content %}
+<div class="page-title-row">
+  <h1>QR Verification</h1>
+  <div class="breadcrumb"><a href="{% url 'dashboard' %}">Dashboard</a> / Scan QR</div>
+</div>
+<p class="text-muted" style="margin-top:-14px;margin-bottom:20px;">Scan a ticket to check an attendee in.</p>
+
+<div class="card" style="max-width:640px;">
+  <div class="card-header"><h2>Verify a Ticket</h2></div>
+  <div style="padding:22px;">
+
+    <form method="post" enctype="multipart/form-data" style="margin-bottom:22px;">
+      {% csrf_token %}
+      <div class="form-group">
+        <label>Upload QR Image</label>
+        <input type="file" name="qr_image" accept="image/*">
+      </div>
+      <button type="submit" class="btn" style="background:#ff5c00;color:#fff;">
+        <i class="fas fa-qrcode"></i> Verify from Image
+      </button>
+    </form>
+
+    <hr style="border:none;border-top:1px solid var(--border-color);margin:20px 0;">
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <label>Or Paste Ticket ID / Token</label>
+        <input type="text" name="ticket_token" placeholder="e.g. TCK-D7497480 or the full token">
+      </div>
+      <button type="submit" class="btn" style="background:#111;color:#fff;">
+        <i class="fas fa-check"></i> Verify
+      </button>
+    </form>
+
+    {% if result %}
+      {% if result.success %}
+        <div class="scan-result success">
+          <strong><i class="fas fa-check-circle"></i> Ticket Verified — {% if result.registration.checked_in %}Checked In{% endif %}</strong>
+          <p style="margin-top:8px;">
+            {{ result.registration.user.get_full_name|default:result.registration.user.username }}
+            — {{ result.registration.event.name }} ({{ result.registration.ticket_id }})
+          </p>
+        </div>
+      {% else %}
+        <div class="scan-result fail">
+          <strong><i class="fas fa-times-circle"></i> Verification Failed</strong>
+          <p style="margin-top:8px;">{{ result.message }}</p>
+        </div>
+      {% endif %}
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

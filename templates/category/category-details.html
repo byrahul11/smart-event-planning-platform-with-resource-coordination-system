@@ -1,0 +1,21 @@
+{% extends "base/base.html" %}
+{% block title %}Category Details{% endblock %}
+
+{% block content %}
+<div class="page-title-row">
+  <h1>Category Details</h1>
+  <div class="breadcrumb"><a href="{% url 'category_list' %}">Category List</a> / Details</div>
+</div>
+
+<div class="card">
+  <div class="card-header"><h2>{{ category.name }}</h2></div>
+  <div style="padding:20px;">
+    <p><strong>Description:</strong> {{ category.description|default:"—" }}</p>
+    <p><strong>Total Events in this Category:</strong> {{ category.event_count }}</p>
+    <div style="margin-top:16px;">
+      <a href="{% url 'edit_category' category.pk %}" class="btn btn-primary">Edit</a>
+      <a href="{% url 'delete_category' category.pk %}" class="btn btn-danger">Delete</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

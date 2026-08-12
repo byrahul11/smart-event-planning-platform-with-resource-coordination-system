@@ -1,0 +1,50 @@
+{% extends "base/base.html" %}
+{% block title %}Event List{% endblock %}
+
+{% block content %}
+<div class="page-title-row">
+  <h1>Event List</h1>
+  <div class="breadcrumb"><a href="{% url 'dashboard' %}">Dashboard</a> / Event List</div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>All Events {% if query %}<span class="text-muted" style="font-weight:400;">— search: "{{ query }}"</span>{% endif %}</h2>
+    <a href="{% url 'create_event' %}" class="btn btn-primary">+ Create Event</a>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Event Name</th>
+        <th>Category</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Venue</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for event in events %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ event.name }}</td>
+        <td>{{ event.category.name|default:"—" }}</td>
+        <td>{{ event.start_date }}</td>
+        <td>{{ event.end_date }}</td>
+        <td>{{ event.venue }}</td>
+        <td><span class="badge {{ event.status }}">{{ event.get_status_display }}</span></td>
+        <td>
+          <a href="{% url 'event_details' event.pk %}" class="btn btn-secondary btn-sm">View</a>
+          <a href="{% url 'edit_event' event.pk %}" class="btn btn-primary btn-sm">Edit</a>
+          <a href="{% url 'delete_event' event.pk %}" class="btn btn-danger btn-sm">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="8" style="text-align:center;color:#888;">No events yet</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

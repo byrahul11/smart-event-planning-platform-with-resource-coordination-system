@@ -1,0 +1,31 @@
+{% extends "base/base.html" %}
+{% block title %}My Tickets{% endblock %}
+
+{% block content %}
+<div class="page-title-row">
+  <h1>My Tickets</h1>
+  <div class="breadcrumb"><a href="{% url 'user_dashboard' %}">Dashboard</a> / My Tickets</div>
+</div>
+
+<div class="card">
+  <table>
+    <thead>
+      <tr><th>#</th><th>Event</th><th>Ticket ID</th><th>Status</th><th>Registered On</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for reg in registrations %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ reg.event.name }}</td>
+        <td>{{ reg.ticket_id }}</td>
+        <td><span class="badge {{ reg.status }}">{{ reg.get_status_display }}</span></td>
+        <td>{{ reg.registered_at|date:"M d, Y" }}</td>
+        <td><a href="{% url 'view_ticket' reg.ticket_id %}" class="btn btn-primary btn-sm">View Ticket</a></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" style="text-align:center;color:#888;">You haven't registered for any events yet</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

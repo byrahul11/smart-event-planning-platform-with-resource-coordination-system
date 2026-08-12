@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Category List</title>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 30px;
+    }
+
+    .page-title {
+      background: #17203a;
+      color: #ffffff;
+      padding: 15px 25px;
+      border-radius: 6px;
+      margin-bottom: 25px;
+      font-size: 20px;
+    }
+
+    .table-card {
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 24px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .table-header h2 {
+      font-size: 18px;
+      color: #17203a;
+    }
+
+    .btn-add {
+      background: #3949ab;
+      color: white;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .btn-add:hover {
+      background: #2c3a8c;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: #17203a;
+      color: white;
+    }
+
+    th {
+      padding: 13px 20px;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    td {
+      padding: 13px 20px;
+      font-size: 14px;
+      color: #444;
+      border-bottom: 1px solid #eee;
+    }
+
+    tbody tr:hover {
+      background: #f0f4ff;
+    }
+
+    .btn-edit {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 5px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      margin-right: 5px;
+    }
+
+    .btn-delete {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 5px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <div class="page-title">
+    Event Registration Platform — Category List
+  </div>
+
+  <div class="table-card">
+
+    <div class="table-header">
+      <h2>Event Categories</h2>
+
+      <a href="{% url 'create_category' %}" class="btn-add">
+        + Create Category
+      </a>
+    </div>
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Category Name</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        {% for category in categories %}
+
+        <tr>
+
+          <td>{{ category.id }}</td>
+
+          <td>{{ category.name }}</td>
+
+          <td>
+            <button class="btn-edit">Edit</button>
+            <button class="btn-delete">Delete</button>
+          </td>
+
+        </tr>
+
+        {% empty %}
+
+        <tr>
+          <td colspan="3" style="text-align:center;">
+            No Categories Available
+          </td>
+        </tr>
+
+        {% endfor %}
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</body>
+</html>

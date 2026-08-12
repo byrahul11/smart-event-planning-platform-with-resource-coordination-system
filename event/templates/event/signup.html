@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up</title>
+
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+    }
+
+    .card {
+      background: #f6f3f3;
+      width: 100%;
+      max-width: 500px;
+      padding: 25px 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #2c3e50;
+      text-align: center;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      margin-bottom: 5px;
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    input {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      background: #6a11cb;
+      color: #fefafa;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background: #2575fc;
+    }
+
+    .login {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      grid-column: 1 / -1;
+      margin-top: 5px;
+    }
+
+    .error {
+      color: red;
+      grid-column: 1 / -1;
+      font-size: 14px;
+    }
+
+    @media (max-width: 500px) {
+      form {
+        grid-template-columns: 1fr;
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>Create Account</h1>
+
+    <form method="POST">
+
+      {% csrf_token %}
+
+      {% if form.errors %}
+      <div class="error">
+        {{ form.errors }}
+      </div>
+      {% endif %}
+      
+      <div class="field full">
+        <label for="username">Username</label>
+        <input type="text"
+               id="username"
+               name="username"
+               placeholder="Enter Username"
+               required>
+      </div>
+
+      <div class="field full">
+        <label for="email">Email</label>
+        <input type="email"
+               id="email"
+               name="email"
+               placeholder="Enter your email"
+               required>
+      </div>
+
+      <div class="field">
+        <label for="phone">Phone Number</label>
+        <input type="tel"
+               id="phone"
+               name="phone"
+               placeholder="Enter phone number">
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password"
+               id="password"
+               name="password"
+               placeholder="Min 6 characters"
+               minlength="6"
+               required>
+      </div>
+
+      <div class="field full">
+        <label for="password2">Confirm Password</label>
+        <input type="password"
+               id="password2"
+               name="password2"
+               placeholder="Re-enter your password"
+               minlength="6"
+               required>
+      </div>
+
+      <div class="full">
+        <button type="submit">Sign Up</button>
+      </div>
+
+      <div class="login">
+        <span>Already have an account?</span>
+        <a href="#">Login</a>
+      </div>
+
+    </form>
+  </div>
+
+</body>
+</html>

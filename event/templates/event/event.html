@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Create Event</title>
+</head>
+
+<style>
+body {
+  font-family: sans-serif;
+  background-color: #f4f4f4;
+  padding: 20px;
+}
+
+.form-card {
+  background-color: #ffffff;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 25px;
+  border: 1px solid #ccc;
+}
+
+h1 {
+  text-align: center;
+  margin-top: 0;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+textarea {
+  height: 100px;
+}
+
+.btn-create {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.error {
+  color: red;
+  margin-bottom: 15px;
+}
+</style>
+
+<body>
+
+  <div class="page">
+    <div class="form-card">
+
+      <h1>Create Event</h1>
+
+      <form method="POST">
+
+        {% csrf_token %}
+
+        {% if form.errors %}
+        <div class="error">
+          {{ form.errors }}
+        </div>
+        {% endif %}
+
+        <div class="form-group">
+          <label for="event-name">Event Name</label>
+          <input type="text"
+                 id="event-name"
+                 name="name"
+                 placeholder="Enter Event Name"
+                 required />
+        </div>
+
+        <div class="form-group">
+          <label for="category">Category</label>
+          <select id="category" name="category" required>
+
+            {% for category in categories %}
+            <option value="{{ category.id }}">
+              {{ category.name }}
+            </option>
+            {% endfor %}
+
+          </select>
+        </div>
+
+        <div class="form-row">
+
+          <div class="form-group">
+            <label for="start-date">Start Date</label>
+            <input type="date"
+                   id="start-date"
+                   name="start_date"
+                   required />
+          </div>
+
+          <div class="form-group">
+            <label for="end-date">End Date</label>
+            <input type="date"
+                   id="end-date"
+                   name="end_date"
+                   required />
+          </div>
+
+        </div>
+
+        <div class="form-group">
+          <label for="venue">Venue</label>
+          <input type="text"
+                 id="venue"
+                 name="venue"
+                 placeholder="Enter Venue"
+                 required />
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea id="description"
+                    name="description"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="status">Status</label>
+          <select id="status" name="status">
+            <option value="active">Active</option>
+            <option value="pending">Pending</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn-create">
+          Create Event
+        </button>
+
+      </form>
+
+    </div>
+  </div>
+
+</body>
+</html>

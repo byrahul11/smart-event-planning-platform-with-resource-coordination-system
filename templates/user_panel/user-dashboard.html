@@ -1,0 +1,62 @@
+{% extends "base/base.html" %}
+{% block title %}User Panel{% endblock %}
+
+{% block content %}
+<div class="page-title-row">
+  <h1>Welcome, {{ request.user.get_full_name|default:request.user.username }}</h1>
+  <div class="breadcrumb"><a href="{% url 'profile' %}">My Profile</a></div>
+</div>
+
+{% if upcoming_events %}
+<div class="card" style="padding:18px 22px;margin-bottom:22px;">
+  <h2 style="font-size:15px;margin-bottom:10px;"><i class="fas fa-clock"></i> Upcoming Events</h2>
+  <div style="display:flex;gap:12px;overflow-x:auto;">
+    {% for event in upcoming_events %}
+      <div style="min-width:200px;background:rgba(57,73,171,0.06);border-radius:8px;padding:12px 14px;">
+        <div style="font-weight:700;font-size:13.5px;">{{ event.name }}</div>
+        <div class="text-muted" style="font-size:12px;">{{ event.start_date }}</div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<h1 style="font-size:22px;margin-bottom:16px;">Available Events</h1>
+
+<div class="event-grid">
+  {% for event in available_events %}
+    <div class="event-card">
+      {% if event.image %}
+        <img src="{{ event.image.url }}" alt="{{ event.name }}" style="width:100%;height:120px;object-fit:cover;border-radius:8px;">
+      {% endif %}
+      <div class="event-card-top">
+        <div>
+          <h3>{{ event.name }}</h3>
+          {% if event.category %}<span class="category-pill">{{ event.category.name }}</span>{% endif %}
+        </div>
+        <span class="badge {{ event.status }}">{{ event.get_status_display }}</span>
+      </div>
+
+      <div class="event-meta"><i class="fas fa-map-marker-alt"></i> {{ event.venue }}</div>
+      <div class="event-meta"><i class="fas fa-calendar-alt"></i> {{ event.start_date }} - {{ event.end_date }}</div>
+      <div class="event-desc">{{ event.description|truncatewords:18|default:"—" }}</div>
+
+      <div class="event-actions">
+        <a href="{% url 'event_details' event.pk %}" class="btn btn-secondary">View Details</a>
+
+        {% if event.pk in my_registration_event_ids %}
+          <a href="{% url 'my_tickets' %}" class="btn btn-success">View Ticket</a>
+        {% else %}
+          <a href="{% url 'register_for_event' event.pk %}" class="btn btn-primary">Register</a>
+        {% endif %}
+
+        <a href="{% url 'toggle_wishlist' event.pk %}" class="btn {% if event.pk in my_wishlist_event_ids %}btn-danger{% else %}btn-warning{% endif %}">
+          {% if event.pk in my_wishlist_event_ids %}<i class="fas fa-heart"></i> Wishlisted{% else %}<i class="far fa-heart"></i> Wishlist{% endif %}
+        </a>
+      </div>
+    </div>
+  {% empty %}
+    <p class="text-muted">No events available right now — check back soon!</p>
+  {% endfor %}
+</div>
+{% endblock %}

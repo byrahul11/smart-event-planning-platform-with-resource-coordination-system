@@ -1,0 +1,33 @@
+{% extends "base/base.html" %}
+{% block title %}Event Wish List{% endblock %}
+
+{% block content %}
+<div class="page-title-row">
+  <h1>Event Wish List</h1>
+  <div class="breadcrumb"><a href="{% url 'dashboard' %}">Dashboard</a> / Event Wish List</div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>Users Interested In Events</h2>
+    <a href="{% url 'add_wishlist_user' %}" class="btn btn-primary">+ Add Wish User</a>
+  </div>
+  <table>
+    <thead>
+      <tr><th>#</th><th>User</th><th>Event</th><th>Added On</th></tr>
+    </thead>
+    <tbody>
+      {% for item in wishlist_items %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ item.user.username }}</td>
+        <td>{{ item.event.name }}</td>
+        <td>{{ item.added_at|date:"M d, Y" }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4" style="text-align:center;color:#888;">No wishlist entries yet</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base/base.html" %}
+{% block title %}Event Members{% endblock %}
+
+{% block content %}
+<div class="page-title-row">
+  <h1>Event Members</h1>
+  <div class="breadcrumb"><a href="{% url 'dashboard' %}">Dashboard</a> / Members</div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>Organizing Team</h2>
+    <a href="{% url 'add_event_member' %}" class="btn btn-primary">+ Add Member</a>
+  </div>
+  <table>
+    <thead>
+      <tr><th>#</th><th>Name</th><th>Event</th><th>Role</th><th>Email</th><th>Phone</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for member in members %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ member.name }}</td>
+        <td>{{ member.event.name }}</td>
+        <td><span class="category-pill">{{ member.get_role_display }}</span></td>
+        <td>{{ member.email }}</td>
+        <td>{{ member.phone|default:"—" }}</td>
+        <td>
+          <form method="post" action="{% url 'delete_event_member' member.pk %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7" style="text-align:center;color:#888;">No members added yet</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

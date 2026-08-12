@@ -1,0 +1,62 @@
+{% extends "base/base.html" %}
+{% block title %}Edit Event{% endblock %}
+
+{% block content %}
+<div class="form-card wide">
+  <h1>Edit Event</h1>
+  <form method="post" action="{% url 'edit_event' event.pk %}" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label for="id_name">Event Name</label>
+      {{ form.name }}
+      {{ form.name.errors }}
+    </div>
+
+    <div class="form-group">
+      <label for="id_category">Category</label>
+      {{ form.category }}
+    </div>
+
+    <div style="display:flex;gap:14px;">
+      <div class="form-group" style="flex:1;">
+        <label for="id_start_date">Start Date</label>
+        {{ form.start_date }}
+      </div>
+      <div class="form-group" style="flex:1;">
+        <label for="id_end_date">End Date</label>
+        {{ form.end_date }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="id_venue">Venue</label>
+      {{ form.venue }}
+    </div>
+
+    <div class="form-group">
+      <label for="id_description">Description</label>
+      {{ form.description }}
+    </div>
+
+    <div class="form-group">
+      <label for="id_status">Status</label>
+      {{ form.status }}
+    </div>
+
+    {% if event.image %}
+      <div class="form-group">
+        <label>Current Banner</label>
+        <img src="{{ event.image.url }}" alt="{{ event.name }}" style="max-width:180px;border-radius:8px;display:block;margin-bottom:8px;">
+      </div>
+    {% endif %}
+
+    <div class="form-group">
+      <label for="id_image">Replace Banner Image (optional)</label>
+      {{ form.image }}
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+  </form>
+</div>
+{% endblock %}

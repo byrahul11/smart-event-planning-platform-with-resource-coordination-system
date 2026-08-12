@@ -1,0 +1,31 @@
+{% extends "base/base.html" %}
+{% block title %}Event Details{% endblock %}
+
+{% block content %}
+<div class="page-title-row">
+  <h1>Event Details</h1>
+  <div class="breadcrumb"><a href="{% url 'event_list' %}">Event List</a> / Details</div>
+</div>
+
+<div class="card">
+  {% if event.image %}
+    <img src="{{ event.image.url }}" alt="{{ event.name }}" style="width:100%;max-height:260px;object-fit:cover;">
+  {% endif %}
+  <div class="card-header"><h2>{{ event.name }}</h2>
+    <span class="badge {{ event.status }}">{{ event.get_status_display }}</span>
+  </div>
+  <div style="padding:20px;">
+    <p><strong>Category:</strong> {{ event.category.name|default:"—" }}</p>
+    <p><strong>Start Date:</strong> {{ event.start_date }}</p>
+    <p><strong>End Date:</strong> {{ event.end_date }}</p>
+    <p><strong>Venue:</strong> {{ event.venue }}</p>
+    <p><strong>Registered Attendees:</strong> {{ registrations_count }}</p>
+    <p style="margin-top:10px;"><strong>Description:</strong><br>{{ event.description|default:"—" }}</p>
+    <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+      <a href="{% url 'edit_event' event.pk %}" class="btn btn-primary">Edit</a>
+      <a href="{% url 'delete_event' event.pk %}" class="btn btn-danger">Delete</a>
+      <a href="{% url 'admin_registration_list' %}?event={{ event.pk }}" class="btn btn-secondary">View Registrations</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
