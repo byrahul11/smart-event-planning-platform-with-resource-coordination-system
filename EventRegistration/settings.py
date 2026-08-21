@@ -123,3 +123,5 @@ LOGOUT_REDIRECT_URL = 'login'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+GEMINI_API_KEY = 'AQ.Ab8RN6LxTOD-UgX69muHlfMt1EZQrq9XmovoPVZbfp5xAaYnfw'

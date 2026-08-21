@@ -46,15 +46,13 @@ def login_view(request):
 
 
 def signup_view(request):
-    """Real account creation (Milestone 3) — students/attendees sign up here.
-    The admin/organizer account remains a Django superuser."""
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             user.set_password(form.cleaned_data['password'])
             user.save()
-            profile = user.profile  # auto-created by signal
+            profile = user.profile
             profile.phone = form.cleaned_data.get('phone', '')
             profile.save()
             messages.success(request, 'Account created! Please log in.')
@@ -89,7 +87,7 @@ def dashboard_view(request):
 
 
 # ============================================================
-# User Panel (Image 5) — end-user / attendee side
+# User Panel
 # ============================================================
 
 @login_required(login_url='login')
@@ -115,7 +113,7 @@ def user_dashboard_view(request):
 
 
 # ============================================================
-# Event views (Milestone 2, kept + image upload support)
+# Event views
 # ============================================================
 
 @login_required(login_url='login')
@@ -158,9 +156,11 @@ def edit_event_view(request, pk):
             return redirect('event_list')
         else:
             messages.error(request, 'Please check the form and try again')
+    else:
+        form = EventForm(instance=event)  # ← FIX: load existing data on GET
 
     categories = Category.objects.all()
-    return render(request, 'event/edit-event.html', {'event': event, 'categories': categories})
+    return render(request, 'event/edit-event.html', {'event': event, 'categories': categories, 'form': form})
 
 
 @login_required(login_url='login')
@@ -185,13 +185,12 @@ def delete_event_view(request, pk):
 
 @login_required(login_url='login')
 def complete_event_list_view(request):
-    """MILESTONE 3 — sidebar item 'Complete Event List'."""
     events = Event.objects.filter(status='completed').order_by('-end_date')
     return render(request, 'event/complete-event-list.html', {'events': events})
 
 
 # ============================================================
-# Category views (Milestone 2, unchanged)
+# Category views
 # ============================================================
 
 @login_required(login_url='login')
@@ -212,7 +211,6 @@ def create_category_view(request):
             messages.error(request, 'Please check the form and try again')
     else:
         form = CategoryForm()
-
     return render(request, 'category/create-category.html', {'form': form})
 
 
@@ -228,8 +226,10 @@ def edit_category_view(request, pk):
             return redirect('category_list')
         else:
             messages.error(request, 'Please check the form and try again')
+    else:
+        form = CategoryForm(instance=category)  # ← FIX: load existing data on GET
 
-    return render(request, 'category/edit-category.html', {'category': category})
+    return render(request, 'category/edit-category.html', {'category': category, 'form': form})
 
 
 @login_required(login_url='login')
@@ -250,7 +250,7 @@ def delete_category_view(request, pk):
 
 
 # ============================================================
-# Profile & Theme Settings  (Improvements #1 and #2)
+# Profile & Theme Settings
 # ============================================================
 
 @login_required(login_url='login')
@@ -282,7 +282,6 @@ def edit_profile_view(request):
 
 @login_required(login_url='login')
 def theme_settings_view(request):
-    """Powers the 'Theme Settings' panel shown in Image 2."""
     profile = request.user.profile
     if request.method == 'POST':
         form = ThemeForm(request.POST, instance=profile)
@@ -297,7 +296,6 @@ def theme_settings_view(request):
 
 @login_required(login_url='login')
 def reset_theme_view(request):
-    """'Reset Theme' button in Image 2."""
     profile = request.user.profile
     profile.font_family = 'Poppins'
     profile.primary_color = '#3949ab'
@@ -311,7 +309,6 @@ def reset_theme_view(request):
 
 @login_required(login_url='login')
 def toggle_dark_mode_view(request):
-    """Quick 'Dark Mode' toggle from the navbar profile dropdown (Image 1)."""
     profile = request.user.profile
     profile.dark_mode = not profile.dark_mode
     profile.save()
@@ -320,7 +317,7 @@ def toggle_dark_mode_view(request):
 
 
 # ============================================================
-# Event Members  (Improvement #3 — 'Add Event Member')
+# Event Members
 # ============================================================
 
 @login_required(login_url='login')
@@ -354,12 +351,11 @@ def delete_event_member_view(request, pk):
 
 
 # ============================================================
-# Registration / Tickets  (Improvement #4 & #5)
+# Registration / Tickets
 # ============================================================
 
 @login_required(login_url='login')
 def register_for_event_view(request, pk):
-    """User clicks 'Register' on an event card (Image 5) -> creates a ticket + QR."""
     event = get_object_or_404(Event, pk=pk)
     registration, created = Registration.objects.get_or_create(
         event=event, user=request.user, defaults={'status': 'attending'}
@@ -376,7 +372,6 @@ def register_for_event_view(request, pk):
 
 @login_required(login_url='login')
 def view_ticket_view(request, ticket_id):
-    """The ticket page shown in Image 6 (QR code, print, download)."""
     registration = get_object_or_404(Registration, ticket_id=ticket_id)
     if registration.user != request.user and not request.user.is_staff:
         messages.error(request, "You don't have permission to view this ticket.")
@@ -392,7 +387,6 @@ def my_tickets_view(request):
 
 @login_required(login_url='login')
 def download_ticket_pdf_view(request, ticket_id):
-    """'Download PDF' button in Image 6 — a simple one-page ticket PDF."""
     from reportlab.pdfgen import canvas
     from reportlab.lib.pagesizes import A5
     from reportlab.lib.units import mm
@@ -447,7 +441,6 @@ def download_ticket_pdf_view(request, ticket_id):
 
 @login_required(login_url='login')
 def admin_registration_list_view(request):
-    """MILESTONE 3 — sidebar item 'Join Event List' (admin view of who registered)."""
     registrations = Registration.objects.select_related('event', 'user').all()
     event_filter = request.GET.get('event')
     if event_filter:
@@ -460,12 +453,11 @@ def admin_registration_list_view(request):
 
 
 # ============================================================
-# Wishlist  (Improvement #3 — 'Event Wish List' / 'Add Event Wish User')
+# Wishlist
 # ============================================================
 
 @login_required(login_url='login')
 def toggle_wishlist_view(request, pk):
-    """User clicks 'Wishlist' on an event card (Image 5)."""
     event = get_object_or_404(Event, pk=pk)
     wishlist_item, created = Wishlist.objects.get_or_create(event=event, user=request.user)
     if not created:
@@ -478,14 +470,12 @@ def toggle_wishlist_view(request, pk):
 
 @login_required(login_url='login')
 def admin_wishlist_list_view(request):
-    """MILESTONE 3 — sidebar item 'Event Wish List' (admin view)."""
     wishlist_items = Wishlist.objects.select_related('event', 'user').all()
     return render(request, 'wishlist/event-wish-list.html', {'wishlist_items': wishlist_items})
 
 
 @login_required(login_url='login')
 def add_wishlist_user_view(request):
-    """MILESTONE 3 — sidebar item 'Add Event Wish User' (admin manually adds interest)."""
     if request.method == 'POST':
         event_id = request.POST.get('event')
         username = request.POST.get('username')
@@ -500,19 +490,16 @@ def add_wishlist_user_view(request):
             else:
                 messages.info(request, f'{user.username} is already on the wishlist for {event.name}')
         return redirect('admin_wishlist_list')
-
     return render(request, 'wishlist/add-wish-user.html', {'events': Event.objects.all()})
 
 
 # ============================================================
-# Attendance / QR Verification  (Improvement #5)
+# Attendance / QR Verification
 # ============================================================
 
 def _decode_qr_from_image(uploaded_file):
-    """Decodes a QR code from an uploaded image using OpenCV (no system deps)."""
     import cv2
     import numpy as np
-
     uploaded_file.seek(0)
     file_bytes = np.frombuffer(uploaded_file.read(), np.uint8)
     img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
@@ -522,10 +509,8 @@ def _decode_qr_from_image(uploaded_file):
     data, _, _ = detector.detectAndDecode(img)
     return data or None
 
-
 @login_required(login_url='login')
 def scan_qr_view(request):
-    """MILESTONE 3 — 'Scan QR' (Image 7): upload a QR image OR paste a ticket ID/token."""
     result = None
     if request.method == 'POST':
         registration = None
@@ -534,7 +519,7 @@ def scan_qr_view(request):
             try:
                 token = _decode_qr_from_image(request.FILES['qr_image'])
             except ImportError:
-                messages.error(request, 'opencv-python-headless is not installed. Run: pip install opencv-python-headless')
+                messages.error(request, 'opencv-python-headless is not installed.')
                 return redirect('scan_qr')
             if token:
                 registration = Registration.objects.filter(verification_token=token).first()
@@ -553,18 +538,20 @@ def scan_qr_view(request):
         if registration:
             if registration.status == 'cancelled':
                 result = {'success': False, 'message': 'This ticket has been cancelled.'}
+            elif registration.checked_in:
+                result = {'success': False, 'message': f'Ticket already used! Checked in at {registration.checked_in_at}.'}
             else:
-                if not registration.checked_in:
-                    registration.checked_in = True
-                    registration.checked_in_at = timezone.now()
-                    registration.save()
+                registration.checked_in = True
+                registration.checked_in_at = timezone.now()
+                registration.save()
                 result = {'success': True, 'registration': registration}
 
     return render(request, 'attendance/scan-qr.html', {'result': result})
 
 
+
 # ============================================================
-# Finance / Budget Management  (Improvement #6)
+# Finance / Budget Management
 # ============================================================
 
 @login_required(login_url='login')
@@ -573,7 +560,6 @@ def budget_list_view(request):
     search = request.GET.get('q')
     if search:
         budgets = budgets.filter(event__name__icontains=search)
-
     totals = budgets.aggregate(
         total_allocated=Sum('allocated_amount'),
         total_spent=Sum('spent_amount'),
@@ -628,12 +614,10 @@ def delete_budget_view(request, pk):
 
 @login_required(login_url='login')
 def finance_analysis_view(request):
-    """MILESTONE 3 — dynamic event finance analysis for admin."""
     budgets = Budget.objects.select_related('event').all()
     chart_labels = [b.event.name for b in budgets]
     chart_allocated = [float(b.allocated_amount) for b in budgets]
     chart_spent = [float(b.spent_amount) for b in budgets]
-
     totals = budgets.aggregate(
         total_allocated=Sum('allocated_amount'),
         total_spent=Sum('spent_amount'),
@@ -649,7 +633,7 @@ def finance_analysis_view(request):
 
 
 # ============================================================
-# Notifications  (Improvement #3 — dynamic notification icon)
+# Notifications
 # ============================================================
 
 @login_required(login_url='login')
@@ -661,6 +645,40 @@ def notifications_list_view(request):
 
 @login_required(login_url='login')
 def mark_notifications_read_view(request):
-    """Called via a small JS fetch() when the bell dropdown is opened."""
     Notification.objects.filter(is_read=False).update(is_read=True)
     return JsonResponse({'status': 'ok'})
+
+# chatbot_view
+import json as _json
+
+@login_required(login_url='login')
+def chatbot_view(request):
+    if request.method == 'POST':
+        try:
+            from google import genai
+            from django.conf import settings as django_settings
+
+            data = _json.loads(request.body)
+            user_message = data.get('message', '').strip()
+
+            if not user_message:
+                return JsonResponse({'reply': 'Please type a message.'})
+
+            client = genai.Client(api_key=django_settings.GEMINI_API_KEY)
+
+            prompt = f"""You are a helpful assistant for an Event Registration Platform.
+Help users with questions about events, registration, tickets, and the platform.
+Keep answers short and friendly.
+
+User: {user_message}"""
+
+            response = client.models.generate_content(
+                model='gemini-3.6-flash',
+                contents=prompt
+            )
+            return JsonResponse({'reply': response.text})
+
+        except Exception as e:
+            return JsonResponse({'reply': 'Sorry, something went wrong. Try again!'})
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)

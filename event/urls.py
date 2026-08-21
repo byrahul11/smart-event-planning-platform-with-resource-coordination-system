@@ -7,6 +7,7 @@ urlpatterns = [
     path('signup/', views.signup_view, name='signup'),
     path('logout/', views.logout_view, name='logout'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
+    path('chatbot/', views.chatbot_view, name='chatbot'),
 
     # ---- User Panel (Milestone 3) ----
     path('my-dashboard/', views.user_dashboard_view, name='user_dashboard'),

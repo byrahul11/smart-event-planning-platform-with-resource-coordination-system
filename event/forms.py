@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from .models import Event, Category, Profile, EventMember, Budget
-
+import datetime
 
 # ============================================================
 # EXISTING FORMS (Milestone 2)
@@ -12,10 +12,27 @@ class EventForm(forms.ModelForm):
         model = Event
         fields = ['name', 'category', 'start_date', 'end_date', 'venue', 'description', 'status', 'image']
         widgets = {
-            'start_date': forms.DateInput(attrs={'type': 'date'}),
-            'end_date': forms.DateInput(attrs={'type': 'date'}),
+            'start_date': forms.DateInput(attrs={'type': 'date', 'min': datetime.date.today()}),
+            'end_date': forms.DateInput(attrs={'type': 'date', 'min': datetime.date.today()}),
             'description': forms.Textarea(attrs={'rows': 4}),
         }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start_date = cleaned_data.get('start_date')
+        end_date = cleaned_data.get('end_date')
+        today = datetime.date.today()
+
+        if start_date and start_date < today:
+            raise forms.ValidationError('Start date cannot be in the past.')
+
+        if end_date and end_date < today:
+            raise forms.ValidationError('End date cannot be in the past.')
+
+        if start_date and end_date and end_date < start_date:
+            raise forms.ValidationError('End date cannot be before start date.')
+
+        return cleaned_data
 
 
 class CategoryForm(forms.ModelForm):
