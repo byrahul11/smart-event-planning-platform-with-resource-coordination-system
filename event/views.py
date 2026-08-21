@@ -679,6 +679,7 @@ User: {user_message}"""
             return JsonResponse({'reply': response.text})
 
         except Exception as e:
-            return JsonResponse({'reply': 'Sorry, something went wrong. Try again!'})
+            # AFTER (temporary - just for debugging)
+            return JsonResponse({'reply': f'DEBUG ERROR: {str(e)}'})
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
