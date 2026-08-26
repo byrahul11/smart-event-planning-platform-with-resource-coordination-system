@@ -22,7 +22,7 @@ The platform allows admins to create and manage events, while students can regis
 
 ## Tech Stack
 
-**Backend:** Django, Python, OpenCV  
+**Backend:** Django, Python 
 **Frontend:** HTML, CSS, Bootstrap, JavaScript  
 **Database:** SQLite
 
