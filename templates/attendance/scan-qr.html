@@ -7,7 +7,19 @@
   <div class="breadcrumb"><a href="{% url 'dashboard' %}">Dashboard</a> / Scan QR</div>
 </div>
 <p class="text-muted" style="margin-top:-14px;margin-bottom:20px;">Scan a ticket to check an attendee in.</p>
+<div style="margin-bottom:18px;">
+  <button type="button" id="camera-toggle-btn" class="btn" style="background:#28a745;color:#fff;">
+    <i class="fas fa-camera"></i> Scan with Camera
+  </button>
+</div>
 
+<div id="qr-reader" style="width:100%;max-width:400px;margin-bottom:10px;display:none;"></div>
+<div id="qr-reader-status" style="margin-bottom:16px;font-size:13px;color:#28a745;font-weight:600;"></div>
+
+<form method="post" id="camera-scan-form" style="display:none;">
+  {% csrf_token %}
+  <input type="hidden" name="ticket_token" id="camera-ticket-token" value="">
+</form>
 <div class="card" style="max-width:640px;">
   <div class="card-header"><h2>Verify a Ticket</h2></div>
   <div style="padding:22px;">
@@ -55,4 +67,43 @@
 
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+  let html5QrCode = null;
+  let cameraRunning = false;
+  document.getElementById('camera-toggle-btn').addEventListener('click', function () {
+    const readerDiv = document.getElementById('qr-reader');
+    const statusDiv = document.getElementById('qr-reader-status');
+    if (!cameraRunning) {
+      readerDiv.style.display = 'block';
+      html5QrCode = new Html5Qrcode("qr-reader");
+      html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+        function (decodedText) {
+          statusDiv.innerText = "QR detected! Verifying...";
+          html5QrCode.stop().then(function () {
+            document.getElementById('camera-ticket-token').value = decodedText;
+            document.getElementById('camera-scan-form').submit();
+          });
+        }
+      ).then(function () {
+        cameraRunning = true;
+        document.getElementById('camera-toggle-btn').innerHTML = '<i class="fas fa-times"></i> Stop Camera';
+      }).catch(function (err) {
+        statusDiv.style.color = '#dc3545';
+        statusDiv.innerText = "Could not start camera: " + err;
+      });
+    } else {
+      html5QrCode.stop().then(function () {
+        readerDiv.style.display = 'none';
+        cameraRunning = false;
+        document.getElementById('camera-toggle-btn').innerHTML = '<i class="fas fa-camera"></i> Scan with Camera';
+      });
+    }
+  });
+</script>
 {% endblock %}
