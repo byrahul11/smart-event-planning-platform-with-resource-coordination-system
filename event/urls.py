@@ -64,4 +64,9 @@ urlpatterns = [
     # ---- Notifications (Milestone 3) ----
     path('notifications/', views.notifications_list_view, name='notification_list'),
     path('notifications/mark-read/', views.mark_notifications_read_view, name='mark_notifications_read'),
+
+        # ---- Admin Inbox (Milestone 4) ----
+    path('contact-admin/', views.contact_admin_view, name='contact_admin'),
+    path('inbox/', views.admin_inbox_list_view, name='admin_inbox'),
+    path('inbox/<int:user_id>/', views.admin_thread_view, name='admin_thread'),
 ]

@@ -205,3 +205,24 @@ class Notification(models.Model):
 
     def __str__(self):
         return self.title
+
+# ============================================================
+# Admin Inbox (student ↔ admin messaging)
+# ============================================================
+
+class SupportMessage(models.Model):
+    """One row = one message. `thread_user` is always the student side of
+    the conversation — so a whole thread is just: filter(thread_user=X).
+    `sender` tells us whether the student or an admin wrote this particular message."""
+
+    thread_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='support_threads')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_support_messages')
+    body = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"{self.sender.username} in thread({self.thread_user.username})"

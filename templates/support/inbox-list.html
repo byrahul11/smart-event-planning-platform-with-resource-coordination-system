@@ -1,0 +1,31 @@
+{% extends "base/base.html" %}
+{% block title %}Inbox{% endblock %}
+
+{% block content %}
+<div class="page-title-row">
+  <h1>Inbox</h1>
+  <div class="breadcrumb"><a href="{% url 'dashboard' %}">Dashboard</a> / Inbox</div>
+</div>
+
+<div class="card">
+  <div class="card-header"><h2>Student Messages</h2></div>
+  <table>
+    <thead><tr><th>Student</th><th>Last Message</th><th>Sent</th><th></th></tr></thead>
+    <tbody>
+      {% for t in threads %}
+      <tr>
+        <td>
+          {{ t.user.get_full_name|default:t.user.username }}
+          {% if t.unread_count > 0 %}<span class="icon-badge" style="position:static;display:inline-block;margin-left:6px;">{{ t.unread_count }}</span>{% endif %}
+        </td>
+        <td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ t.last_message.body }}</td>
+        <td>{{ t.last_message.created_at|timesince }} ago</td>
+        <td><a href="{% url 'admin_thread' t.user.pk %}" class="btn btn-primary btn-sm">Open</a></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4" style="text-align:center;color:#888;">No messages yet</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

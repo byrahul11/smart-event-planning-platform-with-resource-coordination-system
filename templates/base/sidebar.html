@@ -12,6 +12,9 @@
       <li class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
         <a href="{% url 'dashboard' %}"><i class="fas fa-home"></i> <span>Dashboard</span></a>
       </li>
+          <li class="{% if request.resolver_match.url_name == 'admin_inbox' or request.resolver_match.url_name == 'admin_thread' %}active{% endif %}">
+          <a href="{% url 'admin_inbox' %}"><i class="fas fa-inbox"></i> <span>Inbox</span></a>
+      </li>
 
       <li>
         <div class="nav-toggle" onclick="toggleSubmenu('menu-category')">
@@ -88,6 +91,7 @@
       <li><a href="{% url 'user_dashboard' %}"><i class="fas fa-calendar-alt"></i> <span>Events</span></a></li>
       <li><a href="{% url 'my_tickets' %}"><i class="fas fa-ticket-alt"></i> <span>My Tickets</span></a></li>
       <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> <span>My Profile</span></a></li>
+      <li><a href="{% url 'contact_admin' %}"><i class="fas fa-headset"></i> <span>Contact Admin</span></a></li>
     {% endif %}
 
     <li style="margin-top:8px;border-top:1px solid rgba(255,255,255,0.08);padding-top:8px;">

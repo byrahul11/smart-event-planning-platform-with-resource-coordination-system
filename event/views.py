@@ -9,7 +9,7 @@ from django.http import HttpResponse, JsonResponse
 
 from .models import (
     Event, Category, Profile, EventMember,
-    Registration, Wishlist, Budget, Notification,
+    Registration, Wishlist, Budget, Notification, SupportMessage,
 )
 from .forms import (
     EventForm, CategoryForm, SignUpForm, ProfileForm,
@@ -684,3 +684,69 @@ User: {user_message}"""
             return JsonResponse({'reply': f'DEBUG ERROR: {str(e)}'})
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+# ============================================================
+# MILESTONE 4/5 — Admin Inbox (student <-> admin messaging)
+# ============================================================
+
+@login_required(login_url='login')
+def contact_admin_view(request):
+    """Student side: see their own thread with admin, and send a new message."""
+    if request.method == 'POST':
+        body = request.POST.get('body', '').strip()
+        if body:
+            SupportMessage.objects.create(thread_user=request.user, sender=request.user, body=body)
+            messages.success(request, 'Message sent to admin')
+        return redirect('contact_admin')
+
+    thread_messages = SupportMessage.objects.filter(thread_user=request.user)
+    # mark admin's replies as read since the student is viewing them now
+    SupportMessage.objects.filter(
+        thread_user=request.user, is_read=False
+    ).exclude(sender=request.user).update(is_read=True)
+
+    return render(request, 'support/contact-admin.html', {'thread_messages': thread_messages})
+
+
+@login_required(login_url='login')
+def admin_inbox_list_view(request):
+    """Admin side: one row per student who has messaged in, newest thread first."""
+    if not request.user.is_staff:
+        return redirect('user_dashboard')
+
+    thread_user_ids = SupportMessage.objects.values_list('thread_user', flat=True).distinct()
+    threads = []
+    for uid in thread_user_ids:
+        last_message = SupportMessage.objects.filter(thread_user_id=uid).last()
+        unread_count = SupportMessage.objects.filter(
+            thread_user_id=uid, sender_id=uid, is_read=False
+        ).count()
+        threads.append({'user': last_message.thread_user, 'last_message': last_message, 'unread_count': unread_count})
+
+    threads.sort(key=lambda t: t['last_message'].created_at, reverse=True)
+    return render(request, 'support/inbox-list.html', {'threads': threads})
+
+
+@login_required(login_url='login')
+def admin_thread_view(request, user_id):
+    """Admin side: full conversation with one student, plus a reply box."""
+    if not request.user.is_staff:
+        return redirect('user_dashboard')
+
+    thread_user = get_object_or_404(User, pk=user_id)
+
+    if request.method == 'POST':
+        body = request.POST.get('body', '').strip()
+        if body:
+            SupportMessage.objects.create(thread_user=thread_user, sender=request.user, body=body)
+        return redirect('admin_thread', user_id=user_id)
+
+    thread_messages = SupportMessage.objects.filter(thread_user=thread_user)
+    # mark the student's messages as read now that admin has opened the thread
+    SupportMessage.objects.filter(thread_user=thread_user, sender=thread_user, is_read=False).update(is_read=True)
+
+    return render(request, 'support/inbox-thread.html', {
+        'thread_user': thread_user,
+        'thread_messages': thread_messages,
+    })

@@ -1,0 +1,33 @@
+{% extends "base/base.html" %}
+{% block title %}Conversation — {{ thread_user.username }}{% endblock %}
+
+{% block content %}
+<div class="page-title-row">
+  <h1>{{ thread_user.get_full_name|default:thread_user.username }}</h1>
+  <div class="breadcrumb"><a href="{% url 'admin_inbox' %}">Inbox</a> / Conversation</div>
+</div>
+
+<div class="card" style="max-width:640px;">
+  <div class="card-header"><h2>Conversation</h2></div>
+  <div style="padding:20px;max-height:400px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;">
+    {% for msg in thread_messages %}
+      <div style="align-self:{% if msg.sender == request.user %}flex-end{% else %}flex-start{% endif %};max-width:75%;">
+        <div style="background:{% if msg.sender == request.user %}#6a11cb{% else %}#f0f0f0{% endif %};color:{% if msg.sender == request.user %}#fff{% else %}#333{% endif %};padding:10px 14px;border-radius:10px;font-size:13.5px;">
+          {{ msg.body }}
+        </div>
+        <div class="text-muted" style="font-size:11px;margin-top:2px;{% if msg.sender == request.user %}text-align:right;{% endif %}">
+          {% if msg.sender == request.user %}You{% else %}{{ thread_user.username }}{% endif %} — {{ msg.created_at|date:"M d, g:i A" }}
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-muted" style="text-align:center;">No messages in this thread yet.</p>
+    {% endfor %}
+  </div>
+
+  <form method="post" style="padding:16px 20px;border-top:1px solid var(--border-color);display:flex;gap:10px;">
+    {% csrf_token %}
+    <input type="text" name="body" placeholder="Type your reply..." required style="flex:1;">
+    <button type="submit" class="btn btn-primary">Reply</button>
+  </form>
+</div>
+{% endblock %}
