@@ -1,43 +1,79 @@
-# Event Registration Platform
+# EventHub — Smart Event Planning Platform with Resource Coordination System
 
-A full-stack event registration and management system built with Django, developed as part of the **Infosys Springboard Virtual Internship 7.0**.
+A full-stack event registration and management platform built with **Django**, developed as part of the **Infosys Springboard Virtual Internship 7.0 (B1)**. EventHub gives admins a complete toolkit to plan, run, and track campus events, while students get a simple portal to discover events, register, and receive QR-code tickets.
 
-## About
+---
 
-The platform allows admins to create and manage events, while students can register and receive QR-code tickets for check-in. It includes role-based dashboards, attendance verification, budget tracking, and a customizable theme panel.
+## 🚀 Key Features
 
-**Student:** Rahul Mule — B.Tech 2nd Year, AI & Data Science, TPCT College of Engineering, Osmanabad  
-**Status:** Milestone 4 — Feature Enhancement, Testing & Integration
+**Student / Attendee Portal**
+- Browse and search events by category
+- One-click registration with instant QR-code ticket generation
+- Downloadable PDF tickets
+- Personal "My Tickets" dashboard
+- Event wishlist to save events for later
+- Light/dark mode and a personalized theme (font, colors, size)
 
-## Features
+**Admin Dashboard**
+- Role-based access control (Admin / Student, with an Organiser tier in progress)
+- Full event and category management, with banner image uploads
+- Organizing-team member management (Organizer / Coordinator / Volunteer)
+- Image-based QR scanning for attendee check-in
+- Real-time notification feed (new events, registrations, completions)
 
-- Role-based access control (Admin / Student)
-- Event and category management
-- QR-code ticket generation and scan-based attendance verification
-- Finance and budget tracking with charts
-- Notifications via Django signals
-- Customizable theme panel (colors, fonts, dark mode)
-- Event wishlist
-- AI-assisted FAQ chatbot
+**Finance & Logistics**
+- Per-event budget creation and tracking (allocated vs. spent)
+- Visual budget-utilization dashboard with Chart.js
 
-## Tech Stack
+**AI Assistant**
+- Built-in FAQ chatbot powered by Google Gemini, answering event and registration questions in real time
 
-**Backend:** Django, Python 
-**Frontend:** HTML, CSS, Bootstrap, JavaScript  
-**Database:** SQLite
+---
 
-## Setup
+## 🛠️ Tech Stack
 
+| Layer | Technology |
+|---|---|
+| Backend | Python, Django |
+| Frontend | HTML5, CSS3, Bootstrap, JavaScript |
+| Database | SQLite (via Django ORM) |
+| QR Codes | `qrcode` (generation), OpenCV (scanning) |
+| PDF Tickets | ReportLab |
+| Charts | Chart.js |
+| AI Chatbot | Google Gemini (`google-genai`) |
+
+---
+
+## ⚡ Quick Start
+
+**1. Clone the repo & create a virtual environment**
 ```bash
-git clone https://github.com/byrahul11/event-registration-platform.git
-cd event-registration-platform
+git clone https://github.com/byrahul11/smart-event-planning-platform-with-resource-coordination-system.git
+cd smart-event-planning-platform-with-resource-coordination-system
 python -m venv env
 env\Scripts\activate
+```
+
+**2. Install dependencies**
+```bash
 pip install -r requirements.txt
+```
+
+**3. Apply migrations & create an admin account**
+```bash
 python manage.py migrate
 python manage.py createsuperuser
+```
+
+**4. Run the development server**
+```bash
 python manage.py runserver
 ```
+Visit **http://127.0.0.1:8000/** — log in with your superuser account for the admin dashboard, or sign up as a student for the attendee portal.
+
+---
+
+## 📂 Project Structure
 
 ## License
 
