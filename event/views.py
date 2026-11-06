@@ -1,3 +1,5 @@
+import logging
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -679,9 +681,12 @@ User: {user_message}"""
             )
             return JsonResponse({'reply': response.text})
 
-        except Exception as e:
-            # AFTER (temporary - just for debugging)
-            return JsonResponse({'reply': f'DEBUG ERROR: {str(e)}'})
+        except Exception:
+            logging.exception('Gemini chatbot request failed')
+            return JsonResponse(
+                {'reply': 'The chatbot is temporarily unavailable. Please try again later.'},
+                status=503,
+            )
 
     return JsonResponse({'error': 'Invalid request'}, status=400)
 

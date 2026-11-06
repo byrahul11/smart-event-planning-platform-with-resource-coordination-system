@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 import os
 from pathlib import Path
 
+import dj_database_url
 from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 
@@ -70,6 +71,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -101,11 +103,16 @@ TEMPLATES = [
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+database_url = os.getenv('DATABASE_URL')
+if not DEBUG and not database_url:
+    raise ImproperlyConfigured('Set DATABASE_URL to the production PostgreSQL connection URL.')
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=database_url or f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+        ssl_require=not DEBUG,
+    )
 }
 
 
@@ -143,13 +150,59 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+    },
+}
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = Path(os.getenv('MEDIA_ROOT', BASE_DIR / 'media'))
 
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')
+
+SECURE_SSL_REDIRECT = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0
+
+MEDIA_STORAGE_BACKEND = 'django.core.files.storage.FileSystemStorage'
+if os.getenv('AWS_STORAGE_BUCKET_NAME'):
+    required_storage_settings = (
+        'AWS_ACCESS_KEY_ID',
+        'AWS_SECRET_ACCESS_KEY',
+        'AWS_S3_REGION_NAME',
+    )
+    missing_storage_settings = [
+        setting for setting in required_storage_settings if not os.getenv(setting)
+    ]
+    if missing_storage_settings:
+        raise ImproperlyConfigured(
+            'Set AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_S3_REGION_NAME '
+            'when AWS_STORAGE_BUCKET_NAME is configured.'
+        )
+    MEDIA_STORAGE_BACKEND = 'storages.backends.s3.S3Storage'
+    AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
+    AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+    AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
+    AWS_S3_REGION_NAME = os.environ['AWS_S3_REGION_NAME']
+    AWS_S3_ENDPOINT_URL = os.getenv('AWS_S3_ENDPOINT_URL') or None
+    AWS_S3_FILE_OVERWRITE = False
+    AWS_DEFAULT_ACL = None
+    AWS_QUERYSTRING_AUTH = True
+elif not DEBUG:
+    raise ImproperlyConfigured(
+        'Configure S3-compatible media storage with AWS_STORAGE_BUCKET_NAME '
+        'before running with DEBUG disabled.'
+    )
+
+STORAGES['default']['BACKEND'] = MEDIA_STORAGE_BACKEND

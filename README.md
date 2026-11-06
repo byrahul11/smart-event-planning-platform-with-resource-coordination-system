@@ -36,7 +36,9 @@ A full-stack event registration and management platform built with **Django**, d
 |---|---|
 | Backend | Python, Django |
 | Frontend | HTML5, CSS3, Bootstrap, JavaScript |
-| Database | SQLite (via Django ORM) |
+| Database | SQLite locally; PostgreSQL in production |
+| Static files | WhiteNoise |
+| Uploaded media | S3-compatible object storage |
 | QR Codes | `qrcode` (generation), OpenCV (scanning) |
 | PDF Tickets | ReportLab |
 | Charts | Chart.js |
@@ -76,6 +78,8 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 Visit **http://127.0.0.1:8000/** — log in with your superuser account for the admin dashboard, or sign up as a student for the attendee portal.
+
+For production deployment, follow the [Render deployment guide](./DEPLOYMENT.md).
 
 ---
 
