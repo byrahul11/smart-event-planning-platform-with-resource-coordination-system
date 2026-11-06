@@ -29,7 +29,11 @@ SECRET_KEY = 'django-insecure-jls6j&im-!y4r)^y)3m*54^vyo@3x5umht18js$rj-=xhtcto!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'smart-event-planning-platform-with-21xh.onrender.com',
+]
 
 
 # Application definition
