@@ -59,13 +59,19 @@ env\Scripts\activate
 pip install -r requirements.txt
 ```
 
-**3. Apply migrations & create an admin account**
+**3. Configure the Gemini API key**
+Create a `.env` file in the project root and add your Gemini API key:
+```dotenv
+GEMINI_API_KEY=your-gemini-api-key
+```
+
+**4. Apply migrations & create an admin account**
 ```bash
 python manage.py migrate
 python manage.py createsuperuser
 ```
 
-**4. Run the development server**
+**5. Run the development server**
 ```bash
 python manage.py runserver
 ```
